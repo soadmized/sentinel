@@ -2,16 +2,16 @@ package service
 
 import (
 	"sentry/internal/repo"
+	"time"
 )
 
-type Repo interface {
-	SaveTemperature(temp float32) error
-	SaveMotion(motion bool) error
-	SaveLight(light int) error
+type Repository interface {
+	SaveValues(temp float32, motion bool, light int) error
 
-	GetLastValues() *repo.DataSet
+	LastValues() *repo.DataSet
+	Values(start, end time.Duration) *repo.DataSet
 }
 
 type Service struct {
-	Repo Repo
+	Repo Repository
 }
