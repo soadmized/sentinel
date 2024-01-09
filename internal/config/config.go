@@ -10,11 +10,14 @@ import (
 
 type Config struct {
 	AppPort int    `envconfig:"APP_PORT" default:"8080"`
-	Influx  Influx `envconfig:"INFLUX"`
+	AppUser string `envconfig:"APP_USER"`
+	AppPass string `envconfig:"APP_PASS"`
+
+	Influx Influx `envconfig:"INFLUX"`
 }
 
 type Influx struct {
-	Port   string `envconfig:"PORT" default:"8086"`
+	Port   int    `envconfig:"PORT" default:"8086"`
 	Token  string `envconfig:"TOKEN"`
 	Org    string `envconfig:"ORG" default:"meltdown"`
 	Bucket string `envconfig:"BUCKET" default:"super-bucket"`

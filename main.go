@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"sentry/cmd"
-	"sentry/internal/config"
+	"sentinel/cmd"
+	"sentinel/internal/config"
 )
 
 func main() {

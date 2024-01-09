@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"log"
-	"sentry/internal/build"
-	"sentry/internal/config"
+	"sentinel/internal/build"
+	"sentinel/internal/config"
 )
 
 func Run(conf config.Config) error {

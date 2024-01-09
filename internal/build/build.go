@@ -1,11 +1,14 @@
 package build
 
 import (
+	"crypto/subtle"
+	"sentinel/internal/api"
+	"sentinel/internal/config"
+	"sentinel/internal/repo"
+	"sentinel/internal/service"
+
 	"github.com/labstack/echo/v4"
-	"sentry/internal/api"
-	"sentry/internal/config"
-	"sentry/internal/repo"
-	"sentry/internal/service"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type Builder struct {
@@ -25,6 +28,15 @@ func (b *Builder) Api() (*api.Api, error) {
 	}
 
 	server := echo.New()
+	server.Use(middleware.BasicAuth(func(username, password string, c echo.Context) (bool, error) {
+		if subtle.ConstantTimeCompare([]byte(username), []byte(b.conf.AppUser)) == 1 &&
+			subtle.ConstantTimeCompare([]byte(password), []byte(b.conf.AppPass)) == 1 {
+			return true, nil
+		}
+
+		return false, nil
+	}))
+
 	a := api.Api{
 		Service: srv,
 		Server:  server,

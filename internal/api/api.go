@@ -2,13 +2,17 @@ package api
 
 import (
 	"fmt"
-	"sentry/internal/service"
-
 	"github.com/labstack/echo/v4"
+	"sentinel/internal/model"
 )
 
+type Service interface {
+	SaveValues(dataset model.Dataset) error
+	LastValues() *model.Dataset
+}
+
 type Api struct {
-	Service *service.Service
+	Service Service
 	Server  *echo.Echo
 }
 
@@ -24,7 +28,7 @@ func (a *Api) Start(port int) error {
 }
 
 func (a *Api) Route() {
-	a.Server.POST("/save_values", saveValues)
-	a.Server.POST("/get_last_values", getLastValues)
-	a.Server.GET("hello_world", helloWorld)
+	a.Server.POST("/save_values", a.saveValues)
+	a.Server.POST("/last_values", a.getLastValues)
+	a.Server.GET("/hello_world", a.helloWorld)
 }
