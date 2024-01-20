@@ -3,7 +3,7 @@ package repo
 import (
 	"fmt"
 	"sentinel/internal/config"
-	"sentinel/internal/model"
+	"sentinel/internal/dataset"
 	"sync"
 	"time"
 
@@ -11,13 +11,17 @@ import (
 	influxApi "github.com/influxdata/influxdb-client-go/v2/api"
 )
 
+type fastStorage map[string]dataset.Dataset // {sensorID: values}
+
 type Repo struct {
-	lastValues model.Dataset // this field is temporary here
-	writer     influxApi.WriteAPI
-	reader     influxApi.QueryAPI
+	fastStorage fastStorage
+	writer      influxApi.WriteAPI
+	reader      influxApi.QueryAPI
 }
 
 func New(conf config.Config) (Repo, error) {
+	storage := make(fastStorage)
+
 	url := fmt.Sprintf("http://localhost:%d", conf.Influx.Port)
 	client := influxClient.NewClient(url, conf.Influx.Token)
 
@@ -25,13 +29,14 @@ func New(conf config.Config) (Repo, error) {
 	reader := client.QueryAPI(conf.Influx.Org)
 
 	return Repo{
-		writer: writer,
-		reader: reader,
+		fastStorage: storage,
+		writer:      writer,
+		reader:      reader,
 	}, nil
 }
 
-func (r *Repo) SaveValues(dataset model.Dataset) error {
-	r.lastValues.UpdatedAt = dataset.UpdatedAt
+func (r *Repo) SaveValues(dataset dataset.Dataset) error {
+	r.fastStorage[dataset.Id] = dataset
 
 	wg := sync.WaitGroup{}
 	wg.Add(3)
@@ -58,8 +63,6 @@ func (r *Repo) SaveValues(dataset model.Dataset) error {
 }
 
 func (r *Repo) saveTemperature(id string, stamp time.Time, temp float32) {
-	r.lastValues.Temp = temp
-
 	point := influxClient.NewPointWithMeasurement("temperature").
 		AddTag("id", id).
 		AddField("temperature", temp).
@@ -69,8 +72,6 @@ func (r *Repo) saveTemperature(id string, stamp time.Time, temp float32) {
 }
 
 func (r *Repo) saveMotion(id string, stamp time.Time, motion bool) {
-	r.lastValues.Motion = motion
-
 	point := influxClient.NewPointWithMeasurement("motion").
 		AddTag("id", id).
 		AddField("motion", motion).
@@ -80,8 +81,6 @@ func (r *Repo) saveMotion(id string, stamp time.Time, motion bool) {
 }
 
 func (r *Repo) saveLight(id string, stamp time.Time, light int) {
-	r.lastValues.Light = light
-
 	point := influxClient.NewPointWithMeasurement("light").
 		AddTag("id", id).
 		AddField("light", light).
@@ -91,23 +90,22 @@ func (r *Repo) saveLight(id string, stamp time.Time, light int) {
 }
 
 // LastValues gets last stored values
-func (r *Repo) LastValues() *model.Dataset {
-	return &r.lastValues
+func (r *Repo) LastValues(sensorID string) *dataset.Dataset {
+	values, ok := r.fastStorage[sensorID]
+	if !ok {
+		return &dataset.Dataset{}
+	}
+
+	return &values
 }
 
 // Values gets set of values between start and end
-func (r *Repo) Values(start, end time.Duration) *model.Dataset {
-	return &r.lastValues
-}
+func (r *Repo) Values(sensorID string, start, end time.Duration) *dataset.Dataset {
+	// TODO temporary implementation
+	values, ok := r.fastStorage[sensorID]
+	if !ok {
+		return &dataset.Dataset{}
+	}
 
-func (r *Repo) getMotion() error {
-	return nil
-}
-
-func (r *Repo) getTemperature() error {
-	return nil
-}
-
-func (r *Repo) getLight() error {
-	return nil
+	return &values
 }

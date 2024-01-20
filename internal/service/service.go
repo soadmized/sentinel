@@ -1,24 +1,24 @@
 package service
 
 import (
-	"sentinel/internal/model"
+	"sentinel/internal/dataset"
 	"time"
 
 	"github.com/pkg/errors"
 )
 
 type Repository interface {
-	SaveValues(dataset model.Dataset) error
+	SaveValues(dataset dataset.Dataset) error
 
-	LastValues() *model.Dataset
-	Values(start, end time.Duration) *model.Dataset
+	LastValues(sensorID string) *dataset.Dataset
+	Values(sensorID string, start, end time.Duration) *dataset.Dataset
 }
 
 type Service struct {
 	Repo Repository
 }
 
-func (s *Service) SaveValues(dataset model.Dataset) error {
+func (s *Service) SaveValues(dataset dataset.Dataset) error {
 	err := s.Repo.SaveValues(dataset)
 	if err != nil {
 		return errors.Wrap(err, "save values")
@@ -27,6 +27,6 @@ func (s *Service) SaveValues(dataset model.Dataset) error {
 	return nil
 }
 
-func (s *Service) LastValues() *model.Dataset {
-	return s.Repo.LastValues()
+func (s *Service) LastValues(sensorID string) *dataset.Dataset {
+	return s.Repo.LastValues(sensorID)
 }

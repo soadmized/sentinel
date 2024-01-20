@@ -2,13 +2,14 @@ package api
 
 import (
 	"fmt"
+	"sentinel/internal/dataset"
+
 	"github.com/labstack/echo/v4"
-	"sentinel/internal/model"
 )
 
 type Service interface {
-	SaveValues(dataset model.Dataset) error
-	LastValues() *model.Dataset
+	SaveValues(dataset dataset.Dataset) error
+	LastValues(sensorID string) *dataset.Dataset
 }
 
 type Api struct {

@@ -1,21 +1,27 @@
 package api
 
 import (
-	"sentinel/internal/model"
+	"sentinel/internal/dataset"
+	"time"
 )
 
-type Dataset struct {
-	Id     string  `json:"id,omitempty"` // unique id of device
-	Temp   float32 `json:"temp,omitempty"`
-	Light  int     `json:"light,omitempty"`
-	Motion bool    `json:"motion,omitempty"`
+type lastValuesReq struct {
+	Id string `json:"id"` // unique id of device
 }
 
-func (d Dataset) ToModel() model.Dataset {
-	return model.Dataset{
-		Id:     d.Id,
-		Temp:   d.Temp,
-		Light:  d.Light,
-		Motion: d.Motion,
+type saveValuesReq struct {
+	Id     string  `json:"id"`     // unique ID of device
+	Temp   float32 `json:"temp"`   // temperature sensor data
+	Light  int     `json:"light"`  // light sensor data
+	Motion bool    `json:"motion"` // motion sensor data
+}
+
+func (r saveValuesReq) toModel(stamp time.Time) dataset.Dataset {
+	return dataset.Dataset{
+		Id:        r.Id,
+		Temp:      r.Temp,
+		Light:     r.Light,
+		Motion:    r.Motion,
+		UpdatedAt: stamp,
 	}
 }

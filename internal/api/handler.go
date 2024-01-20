@@ -2,21 +2,22 @@ package api
 
 import (
 	"net/http"
-	"sentinel/internal/model"
 	"time"
 
 	"github.com/labstack/echo/v4"
 )
 
 func (a *Api) saveValues(ctx echo.Context) error {
-	values := new(model.Dataset)
-	values.UpdatedAt = time.Now()
+	req := new(saveValuesReq)
 
-	if err := ctx.Bind(values); err != nil {
+	if err := ctx.Bind(req); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, "convert request body to model")
 	}
 
-	if err := a.Service.SaveValues(*values); err != nil {
+	stamp := time.Now()
+	set := req.toModel(stamp)
+
+	if err := a.Service.SaveValues(set); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, "save values")
 	}
 
@@ -24,7 +25,13 @@ func (a *Api) saveValues(ctx echo.Context) error {
 }
 
 func (a *Api) getLastValues(ctx echo.Context) error {
-	values := a.Service.LastValues()
+	req := new(lastValuesReq)
+
+	if err := ctx.Bind(req); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "convert request body to model")
+	}
+
+	values := a.Service.LastValues(req.Id)
 
 	return ctx.JSON(http.StatusOK, values)
 }
