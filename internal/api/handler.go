@@ -7,7 +7,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (a *Api) saveValues(ctx echo.Context) error {
+//nolint:wrapcheck
+func (a *API) saveValues(ctx echo.Context) error {
 	req := new(saveValuesReq)
 
 	if err := ctx.Bind(req); err != nil {
@@ -24,18 +25,20 @@ func (a *Api) saveValues(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, "saved")
 }
 
-func (a *Api) getLastValues(ctx echo.Context) error {
+//nolint:wrapcheck
+func (a *API) getLastValues(ctx echo.Context) error {
 	req := new(lastValuesReq)
 
 	if err := ctx.Bind(req); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, "convert request body to model")
 	}
 
-	values := a.Service.LastValues(req.Id)
+	values := a.Service.LastValues(req.ID)
 
 	return ctx.JSON(http.StatusOK, values)
 }
 
-func (a *Api) helloWorld(ctx echo.Context) error {
+//nolint:wrapcheck
+func (a *API) helloWorld(ctx echo.Context) error {
 	return ctx.String(http.StatusOK, "HELLO THERE")
 }

@@ -2,9 +2,11 @@ package api
 
 import (
 	"fmt"
-	"sentinel/internal/dataset"
 
 	"github.com/labstack/echo/v4"
+	"github.com/pkg/errors"
+
+	"sentinel/internal/dataset"
 )
 
 type Service interface {
@@ -12,23 +14,23 @@ type Service interface {
 	LastValues(sensorID string) *dataset.Dataset
 }
 
-type Api struct {
+type API struct {
 	Service Service
 	Server  *echo.Echo
 }
 
-func (a *Api) Start(port int) error {
+func (a *API) Start(port int) error {
 	addr := fmt.Sprintf(":%d", port)
 
 	err := a.Server.Start(addr)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "start echo server is failed")
 	}
 
 	return nil
 }
 
-func (a *Api) Route() {
+func (a *API) Route() {
 	a.Server.POST("/save_values", a.saveValues)
 	a.Server.POST("/last_values", a.getLastValues)
 	a.Server.GET("/hello_world", a.helloWorld)

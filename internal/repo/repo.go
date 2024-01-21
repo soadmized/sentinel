@@ -2,13 +2,14 @@ package repo
 
 import (
 	"fmt"
-	"sentinel/internal/config"
-	"sentinel/internal/dataset"
 	"sync"
 	"time"
 
 	influxClient "github.com/influxdata/influxdb-client-go/v2"
 	influxApi "github.com/influxdata/influxdb-client-go/v2/api"
+
+	"sentinel/internal/config"
+	"sentinel/internal/dataset"
 )
 
 type fastStorage map[string]dataset.Dataset // {sensorID: values}
@@ -36,25 +37,25 @@ func New(conf config.Config) (Repo, error) {
 }
 
 func (r *Repo) SaveValues(dataset dataset.Dataset) error {
-	r.fastStorage[dataset.Id] = dataset
+	r.fastStorage[dataset.ID] = dataset
 
 	wg := sync.WaitGroup{}
-	wg.Add(3)
+	wg.Add(3) //nolint:gomnd
 
 	go func() {
-		r.saveTemperature(dataset.Id, dataset.UpdatedAt, dataset.Temp)
+		r.saveTemperature(dataset.ID, dataset.UpdatedAt, dataset.Temp)
 
 		defer wg.Done()
 	}()
 
 	go func() {
-		r.saveMotion(dataset.Id, dataset.UpdatedAt, dataset.Motion)
+		r.saveMotion(dataset.ID, dataset.UpdatedAt, dataset.Motion)
 
 		defer wg.Done()
 	}()
 
 	go func() {
-		r.saveLight(dataset.Id, dataset.UpdatedAt, dataset.Light)
+		r.saveLight(dataset.ID, dataset.UpdatedAt, dataset.Light)
 
 		defer wg.Done()
 	}()
@@ -89,22 +90,22 @@ func (r *Repo) saveLight(id string, stamp time.Time, light int) {
 	r.writer.WritePoint(point)
 }
 
-// LastValues gets last stored values
+// LastValues gets last stored values.
 func (r *Repo) LastValues(sensorID string) *dataset.Dataset {
 	values, ok := r.fastStorage[sensorID]
 	if !ok {
-		return &dataset.Dataset{}
+		return nil
 	}
 
 	return &values
 }
 
-// Values gets set of values between start and end
+// Values gets set of values between start and end.
 func (r *Repo) Values(sensorID string, start, end time.Duration) *dataset.Dataset {
 	// TODO temporary implementation
 	values, ok := r.fastStorage[sensorID]
 	if !ok {
-		return &dataset.Dataset{}
+		return nil
 	}
 
 	return &values

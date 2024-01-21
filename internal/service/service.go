@@ -1,10 +1,11 @@
 package service
 
 import (
-	"sentinel/internal/dataset"
 	"time"
 
 	"github.com/pkg/errors"
+
+	"sentinel/internal/dataset"
 )
 
 type Repository interface {

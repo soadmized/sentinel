@@ -1,16 +1,17 @@
 package api
 
 import (
-	"sentinel/internal/dataset"
 	"time"
+
+	"sentinel/internal/dataset"
 )
 
 type lastValuesReq struct {
-	Id string `json:"id"` // unique id of device
+	ID string `json:"id"` // unique id of device
 }
 
 type saveValuesReq struct {
-	Id     string  `json:"id"`     // unique ID of device
+	ID     string  `json:"id"`     // unique ID of device
 	Temp   float32 `json:"temp"`   // temperature sensor data
 	Light  int     `json:"light"`  // light sensor data
 	Motion bool    `json:"motion"` // motion sensor data
@@ -18,7 +19,7 @@ type saveValuesReq struct {
 
 func (r saveValuesReq) toModel(stamp time.Time) dataset.Dataset {
 	return dataset.Dataset{
-		Id:        r.Id,
+		ID:        r.ID,
 		Temp:      r.Temp,
 		Light:     r.Light,
 		Motion:    r.Motion,

@@ -1,0 +1,57 @@
+run:
+  go: "1.21"
+  deadline: 5m
+  skip-files:
+    - "init.go"
+  build-tags:
+    - mock
+    - integration
+linters:
+  enable-all: true
+  disable:
+    # deprecated
+    - golint
+    - exhaustivestruct
+    - maligned
+    - interfacer
+    - scopelint
+    - ifshort
+    - varcheck
+    - structcheck
+    - deadcode
+    - nosnakecase
+    # ugly
+    - varnamelen
+    - tagalign
+
+    # tmp
+    - unused
+    - godox
+    - testpackage
+    - gomoddirectives
+linters-settings:
+  gofumpt:
+    # Module path which contains the source code being formatted.
+    # Default: ""
+    module-path: sentinel
+  revive:
+    rules:
+      - name: unexported-return
+        disabled: true
+  gci:
+    sections:
+      - Standard
+      - Default
+      - Prefix(sentinel)
+  lll:
+    line-length: 150
+  depguard:
+    rules:
+      main:
+        allow:
+          - $gostd
+          - sentinel
+          - github.com
+        deny:
+          - pkg: "emperror.dev/errors"
+            desc: Should be replaced by "github.com/pkg/errors"

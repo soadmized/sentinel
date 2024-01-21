@@ -2,6 +2,9 @@ package cmd
 
 import (
 	"log"
+
+	"github.com/pkg/errors"
+
 	"sentinel/internal/build"
 	"sentinel/internal/config"
 )
@@ -9,12 +12,12 @@ import (
 func Run(conf config.Config) error {
 	builder, err := build.New(conf)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "build is failed")
 	}
 
-	a, err := builder.Api()
+	a, err := builder.API()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "get api is failed")
 	}
 
 	a.Route()

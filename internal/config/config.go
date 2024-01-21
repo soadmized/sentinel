@@ -24,7 +24,7 @@ type Influx struct {
 }
 
 func Read() Config {
-	conf := Config{}
+	conf := Config{} //nolint:exhaustruct
 
 	if err := godotenv.Load(".env"); err != nil && !errors.Is(err, os.ErrNotExist) {
 		panic(err)

@@ -2,13 +2,15 @@ package build
 
 import (
 	"crypto/subtle"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/pkg/errors"
+
 	"sentinel/internal/api"
 	"sentinel/internal/config"
 	"sentinel/internal/repo"
 	"sentinel/internal/service"
-
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 type Builder struct {
@@ -21,7 +23,7 @@ func New(conf config.Config) (*Builder, error) {
 	return &b, nil
 }
 
-func (b *Builder) Api() (*api.Api, error) {
+func (b *Builder) API() (*api.API, error) {
 	srv, err := b.service()
 	if err != nil {
 		return nil, err
@@ -37,7 +39,7 @@ func (b *Builder) Api() (*api.Api, error) {
 		return false, nil
 	}))
 
-	a := api.Api{
+	a := api.API{
 		Service: srv,
 		Server:  server,
 	}
@@ -59,7 +61,7 @@ func (b *Builder) service() (*service.Service, error) {
 func (b *Builder) repo() (*repo.Repo, error) {
 	r, err := repo.New(b.conf)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "building repo is failed")
 	}
 
 	return &r, nil
