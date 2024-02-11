@@ -8,8 +8,8 @@ services:
       - 8086:8086
     expose:
       - 8086
-  sentry:
-    container_name: sentry
+  sentinel:
+    container_name: sentinel
     env_file:
       - .env
 #    environment:
