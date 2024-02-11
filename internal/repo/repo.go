@@ -10,18 +10,17 @@ import (
 
 	"sentinel/internal/config"
 	"sentinel/internal/dataset"
+	"sentinel/internal/repo/fstorage"
 )
 
-type fastStorage map[string]dataset.Dataset // {sensorID: values}
-
 type Repo struct {
-	fastStorage fastStorage
+	fastStorage fstorage.FastStorage
 	writer      influxApi.WriteAPI
 	reader      influxApi.QueryAPI
 }
 
 func New(conf config.Config) (Repo, error) {
-	storage := make(fastStorage)
+	storage := make(fstorage.FastStorage)
 
 	url := fmt.Sprintf("http://localhost:%d", conf.Influx.Port)
 	client := influxClient.NewClient(url, conf.Influx.Token)
@@ -109,4 +108,15 @@ func (r *Repo) Values(sensorID string, start, end time.Duration) *dataset.Datase
 	}
 
 	return &values
+}
+
+// SensorIDs returns all sensorIDs stored in fast storage.
+func (r *Repo) SensorIDs() []string {
+	ids := make([]string, 0, len(r.fastStorage))
+
+	for id := range r.fastStorage {
+		ids = append(ids, id)
+	}
+
+	return ids
 }

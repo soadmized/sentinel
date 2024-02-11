@@ -39,6 +39,8 @@ func (a *API) getLastValues(ctx echo.Context) error {
 }
 
 //nolint:wrapcheck
-func (a *API) helloWorld(ctx echo.Context) error {
-	return ctx.String(http.StatusOK, "HELLO THERE")
+func (a *API) status(ctx echo.Context) error {
+	statuses := a.Service.SensorStatuses()
+
+	return ctx.Render(http.StatusOK, "status", statuses)
 }

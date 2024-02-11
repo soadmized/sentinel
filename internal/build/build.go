@@ -2,6 +2,7 @@ package build
 
 import (
 	"crypto/subtle"
+	"html/template"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -30,6 +31,11 @@ func (b *Builder) API() (*api.API, error) {
 	}
 
 	server := echo.New()
+	t := &api.Template{
+		Templates: template.Must(template.ParseGlob("internal/templates/*.html")),
+	}
+
+	server.Renderer = t
 	server.Use(middleware.BasicAuth(func(username, password string, c echo.Context) (bool, error) {
 		if subtle.ConstantTimeCompare([]byte(username), []byte(b.conf.AppUser)) == 1 &&
 			subtle.ConstantTimeCompare([]byte(password), []byte(b.conf.AppPass)) == 1 {

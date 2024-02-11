@@ -12,6 +12,7 @@ import (
 type Service interface {
 	SaveValues(dataset dataset.Dataset) error
 	LastValues(sensorID string) *dataset.Dataset
+	SensorStatuses() map[string]bool
 }
 
 type API struct {
@@ -33,5 +34,5 @@ func (a *API) Start(port int) error {
 func (a *API) Route() {
 	a.Server.POST("/save_values", a.saveValues)
 	a.Server.POST("/last_values", a.getLastValues)
-	a.Server.GET("/hello_world", a.helloWorld)
+	a.Server.GET("/status", a.status)
 }
