@@ -6,6 +6,7 @@ COPY . .
 RUN go build -o /bin/app
 
 FROM scratch
-COPY --from=BUILDER /bin/app /bin/
+COPY --from=BUILDER /bin/app /
+COPY templates /templates
 EXPOSE 8080
-ENTRYPOINT ["/bin/app"]
+ENTRYPOINT ["/app"]

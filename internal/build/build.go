@@ -32,7 +32,7 @@ func (b *Builder) API() (*api.API, error) {
 
 	server := echo.New()
 	t := &api.Template{
-		Templates: template.Must(template.ParseGlob("internal/templates/*.html")),
+		Templates: template.Must(template.ParseGlob("templates/*.html")),
 	}
 
 	server.Renderer = t
