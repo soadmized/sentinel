@@ -14,7 +14,7 @@ type saveValuesReq struct {
 	ID     string  `json:"id"`     // unique ID of device
 	Temp   float32 `json:"temp"`   // temperature sensor data
 	Light  int     `json:"light"`  // light sensor data
-	Motion bool    `json:"motion"` // motion sensor data
+	Motion int     `json:"motion"` // motion sensor data
 }
 
 func (r saveValuesReq) toModel(stamp time.Time) dataset.Dataset {
@@ -22,7 +22,15 @@ func (r saveValuesReq) toModel(stamp time.Time) dataset.Dataset {
 		ID:        r.ID,
 		Temp:      r.Temp,
 		Light:     r.Light,
-		Motion:    r.Motion,
+		Motion:    intToBool(r.Motion),
 		UpdatedAt: stamp,
 	}
+}
+
+func intToBool(n int) bool {
+	if n == 1 {
+		return true
+	}
+
+	return false
 }
