@@ -5,7 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"sentinel/internal/dataset"
+	"github.com/soadmized/sentinel/pkg/dataset"
 )
 
 type Repository interface {

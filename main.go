@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"sentinel/cmd"
-	"sentinel/internal/config"
+	"github.com/soadmized/sentinel/cmd"
+	"github.com/soadmized/sentinel/internal/config"
 )
 
 func main() {

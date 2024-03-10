@@ -5,8 +5,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"sentinel/internal/build"
-	"sentinel/internal/config"
+	"github.com/soadmized/sentinel/internal/build"
+	"github.com/soadmized/sentinel/internal/config"
 )
 
 func Run(conf config.Config) error {

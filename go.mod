@@ -1,4 +1,4 @@
-module sentinel
+module github.com/soadmized/sentinel
 
 go 1.21.4
 

@@ -8,9 +8,9 @@ import (
 	influxClient "github.com/influxdata/influxdb-client-go/v2"
 	influxApi "github.com/influxdata/influxdb-client-go/v2/api"
 
-	"sentinel/internal/config"
-	"sentinel/internal/dataset"
-	"sentinel/internal/repo/fstorage"
+	"github.com/soadmized/sentinel/internal/config"
+	"github.com/soadmized/sentinel/internal/repo/fstorage"
+	"github.com/soadmized/sentinel/pkg/dataset"
 )
 
 type Repo struct {

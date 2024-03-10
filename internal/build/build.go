@@ -8,10 +8,10 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/pkg/errors"
 
-	"sentinel/internal/api"
-	"sentinel/internal/config"
-	"sentinel/internal/repo"
-	"sentinel/internal/service"
+	"github.com/soadmized/sentinel/internal/api"
+	"github.com/soadmized/sentinel/internal/config"
+	"github.com/soadmized/sentinel/internal/repo"
+	"github.com/soadmized/sentinel/internal/service"
 )
 
 type Builder struct {

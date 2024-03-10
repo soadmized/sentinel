@@ -3,7 +3,7 @@ package api
 import (
 	"time"
 
-	"sentinel/internal/dataset"
+	"github.com/soadmized/sentinel/pkg/dataset"
 )
 
 type lastValuesReq struct {

@@ -6,7 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 
-	"sentinel/internal/dataset"
+	"github.com/soadmized/sentinel/pkg/dataset"
 )
 
 type Service interface {
