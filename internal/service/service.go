@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-
 	"github.com/soadmized/sentinel/pkg/dataset"
 )
 
@@ -27,6 +26,10 @@ func (s *Service) SaveValues(dataset dataset.Dataset) error {
 	}
 
 	return nil
+}
+
+func (s *Service) SensorIDs() []string {
+	return s.Repo.SensorIDs()
 }
 
 // LastValues returns last values from repo for given sensorID.

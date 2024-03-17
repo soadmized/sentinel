@@ -26,7 +26,7 @@ func (a *API) saveValues(ctx echo.Context) error {
 }
 
 //nolint:wrapcheck
-func (a *API) getLastValues(ctx echo.Context) error {
+func (a *API) lastValues(ctx echo.Context) error {
 	req := new(lastValuesReq)
 
 	if err := ctx.Bind(req); err != nil {
@@ -43,4 +43,9 @@ func (a *API) status(ctx echo.Context) error {
 	statuses := a.Service.SensorStatuses()
 
 	return ctx.Render(http.StatusOK, "status", statuses)
+}
+
+//nolint:wrapcheck
+func (a *API) sensorIDs(ctx echo.Context) error {
+	return ctx.JSON(http.StatusOK, a.Service.SensorIDs())
 }

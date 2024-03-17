@@ -7,7 +7,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/pkg/errors"
-
 	"github.com/soadmized/sentinel/internal/api"
 	"github.com/soadmized/sentinel/internal/config"
 	"github.com/soadmized/sentinel/internal/repo"

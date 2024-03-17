@@ -28,9 +28,5 @@ func (r saveValuesReq) toModel(stamp time.Time) dataset.Dataset {
 }
 
 func intToBool(n int) bool {
-	if n == 1 {
-		return true
-	}
-
-	return false
+	return n == 1
 }

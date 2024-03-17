@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/pkg/errors"
-
 	"github.com/soadmized/sentinel/internal/build"
 	"github.com/soadmized/sentinel/internal/config"
 )
