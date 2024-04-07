@@ -21,7 +21,7 @@ type Repo struct {
 func New(conf config.Config) (Repo, error) {
 	storage := make(fstorage.FastStorage)
 
-	url := fmt.Sprintf("http://localhost:%d", conf.Influx.Port)
+	url := fmt.Sprintf("http://0.0.0.0:%d", conf.Influx.Port)
 	client := influxClient.NewClient(url, conf.Influx.Token)
 
 	writer := client.WriteAPI(conf.Influx.Org, conf.Influx.Bucket)
