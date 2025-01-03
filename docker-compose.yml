@@ -1,0 +1,28 @@
+services:
+  influx:
+    image: influxdb
+    container_name: influx
+    volumes:
+      - influx:/var/lib/influxdb2
+    ports:
+      - 8086:8086
+    expose:
+      - 8086
+  sentinel:
+    container_name: sentinel
+    env_file:
+      - .env
+    #    environment:
+    #      - MY_ENV=value
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - influx
+    ports:
+      - 8080:8080
+    expose:
+      - 8080
+
+volumes:
+  influx:

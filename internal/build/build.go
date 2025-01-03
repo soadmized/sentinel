@@ -9,8 +9,10 @@ import (
 	"github.com/pkg/errors"
 	"github.com/soadmized/sentinel/internal/api"
 	"github.com/soadmized/sentinel/internal/config"
+	"github.com/soadmized/sentinel/internal/queue"
 	"github.com/soadmized/sentinel/internal/repo"
 	"github.com/soadmized/sentinel/internal/service"
+	"github.com/twmb/franz-go/pkg/kgo"
 )
 
 type Builder struct {
@@ -55,10 +57,19 @@ func (b *Builder) API() (*api.API, error) {
 func (b *Builder) service() (*service.Service, error) {
 	r, err := b.repo()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get repo")
 	}
 
 	srv := service.Service{Repo: r}
+
+	producer, err := b.queueClient()
+	if err != nil {
+		return nil, errors.Wrap(err, "get producer")
+	}
+	
+	if producer != nil {
+		srv.Producer = producer
+	}
 
 	return &srv, nil
 }
@@ -70,4 +81,36 @@ func (b *Builder) repo() (*repo.Repo, error) {
 	}
 
 	return &r, nil
+}
+
+func (b *Builder) queueClient() (*queue.Client, error) {
+	cl, err := b.kafkaClient(b.conf.Kafka.EventTopic)
+	if err != nil {
+		return nil, err
+	}
+
+	if cl == nil {
+		return nil, nil
+	}
+
+	return queue.New(cl, b.conf.Kafka.DatasetTopic), nil
+}
+
+func (b *Builder) kafkaClient(topic string) (*kgo.Client, error) {
+	if b.conf.Kafka.Brokers == nil {
+		return nil, nil
+	}
+
+	var topicOpt kgo.ConsumerOpt
+
+	if topic != "" {
+		topicOpt = kgo.ConsumeTopics(topic)
+	}
+
+	client, err := kgo.NewClient(kgo.SeedBrokers(b.conf.Kafka.Brokers...), kgo.ConsumerGroup("sentinel-group"), topicOpt)
+	if err != nil {
+		return nil, errors.Wrap(err, "get kafka client")
+	}
+
+	return client, nil
 }

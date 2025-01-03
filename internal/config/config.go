@@ -14,6 +14,7 @@ type Config struct {
 	AppPass string `envconfig:"APP_PASS"`
 
 	Influx Influx `envconfig:"INFLUX"`
+	Kafka  Kafka  `envconfig:"KAFKA"`
 }
 
 type Influx struct {
@@ -21,6 +22,15 @@ type Influx struct {
 	Token  string `envconfig:"TOKEN"`
 	Org    string `envconfig:"ORG" default:"meltdown"`
 	Bucket string `envconfig:"BUCKET" default:"super-bucket"`
+}
+
+type Kafka struct {
+	Brokers      []string `envconfig:"BROKERS"`
+	User         string   `envconfig:"USER"`
+	Pass         string   `envconfig:"PASS"`
+	UserGroup    string   `envconfig:"USER_GROUP"`
+	DatasetTopic string   `envconfig:"TOPIC_DATASET"` // produce
+	EventTopic   string   `envconfig:"TOPIC_EVENT"`   // consume
 }
 
 func Read() Config {

@@ -18,7 +18,7 @@ func (a *API) saveValues(ctx echo.Context) error {
 	stamp := time.Now()
 	set := req.toModel(stamp)
 
-	if err := a.Service.SaveValues(set); err != nil {
+	if err := a.Service.SaveValues(ctx.Request().Context(), set); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, "save values")
 	}
 
@@ -33,14 +33,14 @@ func (a *API) lastValues(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "convert request body to model")
 	}
 
-	values := a.Service.LastValues(req.ID)
+	values := a.Service.LastValues(ctx.Request().Context(), req.ID)
 
 	return ctx.JSON(http.StatusOK, values)
 }
 
 //nolint:wrapcheck
 func (a *API) status(ctx echo.Context) error {
-	statuses := a.Service.SensorStatuses()
+	statuses := a.Service.SensorStatuses(ctx.Request().Context())
 
 	return ctx.Render(http.StatusOK, "status", statuses)
 }

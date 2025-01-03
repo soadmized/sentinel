@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/labstack/echo/v4"
@@ -9,9 +10,9 @@ import (
 )
 
 type Service interface {
-	SaveValues(dataset dataset.Dataset) error
-	LastValues(sensorID string) *dataset.Dataset
-	SensorStatuses() map[string]bool
+	SaveValues(ctx context.Context, dataset dataset.Dataset) error
+	LastValues(ctx context.Context, sensorID string) *dataset.Dataset
+	SensorStatuses(ctx context.Context) map[string]bool
 	SensorIDs() []string
 }
 
