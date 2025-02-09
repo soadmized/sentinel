@@ -8,6 +8,17 @@ services:
       - 8086:8086
     expose:
       - 8086
+
+  redis:
+    image: redis
+    container_name: redis
+    volumes:
+      - redis:/var/lib/redis
+    ports:
+      - 6379:6379
+    expose:
+      - 6379
+
   sentinel:
     container_name: sentinel
     env_file:
@@ -24,5 +35,18 @@ services:
     expose:
       - 8080
 
+  queuer: # async server
+    container_name: queuer
+    env_file:
+      - .env
+    #    environment:
+    #      - MY_ENV=value
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+
 volumes:
   influx:
+  redis:

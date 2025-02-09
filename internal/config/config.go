@@ -13,6 +13,8 @@ type Config struct {
 	AppUser string `envconfig:"APP_USER"`
 	AppPass string `envconfig:"APP_PASS"`
 
+	RedisHost string `envconfig:"REDIS_HOST"`
+
 	Influx Influx `envconfig:"INFLUX"`
 	Kafka  Kafka  `envconfig:"KAFKA"`
 }

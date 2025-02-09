@@ -2,43 +2,35 @@ package service
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"time"
 
-	"github.com/pkg/errors"
 	"github.com/soadmized/sentinel/pkg/dataset"
 )
 
 type Repository interface {
-	SaveValues(dataset dataset.Dataset) error
+	SaveLastValues(dataset dataset.Dataset) error
 	LastValues(sensorID string) *dataset.Dataset
-	Values(sensorID string, start, end time.Duration) *dataset.Dataset
 	SensorIDs() []string
 }
 
-type Producer interface {
-	ProduceDataset(ctx context.Context, ds dataset.Dataset) error
+type QueueClient interface {
+	Enqueue(values dataset.Dataset) error
 }
 
 type Service struct {
-	Repo     Repository
-	Producer Producer
+	Repo        Repository
+	QueueClient QueueClient
 }
 
 // SaveValues stores values from sensors in repo.
-func (s *Service) SaveValues(ctx context.Context, dataset dataset.Dataset) error {
-	err := s.Repo.SaveValues(dataset)
-	if err != nil {
-		return errors.Wrap(err, "save values")
+func (s *Service) SaveValues(_ context.Context, dataset dataset.Dataset) error {
+	if err := s.Repo.SaveLastValues(dataset); err != nil {
+		return fmt.Errorf("save values: %w", err)
 	}
 
-	log.Print("dataset saved")
-
-	if s.Producer != nil {
-		err := s.Producer.ProduceDataset(ctx, dataset)
-		if err != nil {
-			log.Printf("produce dataset: %e", err)
-		}
+	if err := s.QueueClient.Enqueue(dataset); err != nil {
+		return fmt.Errorf("add task to queue: %w", err)
 	}
 
 	return nil
@@ -49,7 +41,7 @@ func (s *Service) SensorIDs() []string {
 }
 
 // LastValues returns last values from repo for given sensorID.
-func (s *Service) LastValues(ctx context.Context, sensorID string) *dataset.Dataset {
+func (s *Service) LastValues(_ context.Context, sensorID string) *dataset.Dataset {
 	return s.Repo.LastValues(sensorID)
 }
 
