@@ -17,6 +17,8 @@ type Config struct {
 
 	Influx Influx `envconfig:"INFLUX"`
 	Kafka  Kafka  `envconfig:"KAFKA"`
+
+	PostgresDSN string `envconfig:"POSTGRES_DSN"`
 }
 
 type Influx struct {
